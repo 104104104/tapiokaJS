@@ -5,6 +5,7 @@
 phina.globalize();
 
 var MOUSE_CIRCLE_RADIUS = 16;
+var TAPIOKA_MAX_NUM = 100;
 
 var ASSETS = {
   image: {
@@ -43,40 +44,35 @@ phina.define('MainScene', {
 
     this.backgroundColor = '#222';
 
-    // 円を表示
-    var circle = CircleShape().addChildTo(this);
-    circle.x = 100; // x 座標を指定
-    circle.y = 480; // y 座標を指定
-    circle.update = function() {
-      this.x += 1;
-    }
     var mouse = Mouse().addChildTo(this);
     mouse.x = 0;
     mouse.y = 0;
 
-    var tapioka = Sprite('tapioka').addChildTo(this);
-    tapioka.x = this.gridX.center();
-    tapioka.y = this.gridY.center();
-    tapioka.width = 128;
-    tapioka.height = 128;
-    tapioka.update = function(app){
-      var p = app.pointer;
-      if(this.x>=p.x){this.x-=1;}else{this.x+=1;}
-      if(this.y>=p.y){this.y-=1;}else{this.y+=1;}
-    }
+    // グループを生成
+    this.tapiokas = DisplayElement().addChildTo(this);
 
-    // 四角形を表示
-    var rect = RectangleShape().addChildTo(this);
-    rect.x = 320;
-    rect.y = 480;
-    rect.fill = 'cyan'; // 塗りつぶし色を変更
-    rect.strokeWidth = 8; // ストローク幅を変更
+    (TAPIOKA_MAX_NUM).times(function(i) {
+        var tapioka = Sprite('tapioka').addChildTo(this.tapiokas);
+        tapioka.x = this.gridX.center();
+        tapioka.y = this.gridY.center();
+        tapioka.width = 128;
+        tapioka.height = 128;
+        tapioka.update = function(app) {
+          var p = app.pointer;
+          if (this.x >= p.x) {
+            this.x -= Math.floor( Math.random() * (100 + 1 - 1) ) + 1 ;
+          } else {
+            this.x += Math.floor( Math.random() * (100 + 1 - 1) ) + 1 ;
+          }
+          if (this.y >= p.y) {
+            this.y -= Math.floor( Math.random() * (100 + 1 - 1) ) + 1 ;
+          } else {
+            this.y += Math.floor( Math.random() * (100 + 1 - 1) ) + 1 ;
+          }
+        }
+      },
+      this);
 
-    // スターを表示
-    var star = StarShape().addChildTo(this);
-    star.x = 440;
-    star.y = 480;
-    star.radius = 64; // 半径を変更
   },
 });
 
