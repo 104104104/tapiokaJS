@@ -4,16 +4,22 @@
 
 phina.globalize();
 
-var CIRCLE_RADIUS = 32;
+var MOUSE_CIRCLE_RADIUS = 16;
 
-phina.define("Circle", {
+var ASSETS = {
+  image: {
+    'tapioka': './tapioka.png',
+  },
+};
+
+phina.define("Mouse", {
   superClass: 'CircleShape',
 
   init: function(options) {
     options = (options || {}).$safe({
       fill: "red",
       stroke: null,
-      radius: CIRCLE_RADIUS,
+      radius: MOUSE_CIRCLE_RADIUS,
     });
     this.superInit(options);
 
@@ -27,8 +33,10 @@ phina.define("Circle", {
   },
 });
 
+
+
 phina.define('MainScene', {
-  superClass: 'CanvasScene',
+  superClass: 'DisplayScene',
 
   init: function() {
     this.superInit();
@@ -40,11 +48,22 @@ phina.define('MainScene', {
     circle.x = 100; // x 座標を指定
     circle.y = 480; // y 座標を指定
     circle.update = function() {
-      this.x+=1;
+      this.x += 1;
     }
-    var mouse = Circle().addChildTo(this);
-     mouse.x=0;
-     mouse.y=0;
+    var mouse = Mouse().addChildTo(this);
+    mouse.x = 0;
+    mouse.y = 0;
+
+    var tapioka = Sprite('tapioka').addChildTo(this);
+    tapioka.x = this.gridX.center();
+    tapioka.y = this.gridY.center();
+    tapioka.width = 128;
+    tapioka.height = 128;
+    tapioka.update = function(app){
+      var p = app.pointer;
+      if(this.x>=p.x){this.x-=1;}else{this.x+=1;}
+      if(this.y>=p.y){this.y-=1;}else{this.y+=1;}
+    }
 
     // 四角形を表示
     var rect = RectangleShape().addChildTo(this);
@@ -64,6 +83,7 @@ phina.define('MainScene', {
 phina.main(function() {
   var app = GameApp({
     startLabel: 'main',
+    assets: ASSETS,
   });
 
   app.run();
